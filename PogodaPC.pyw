@@ -7,12 +7,17 @@
 # WARNING! All changes made in this file will be lost!
 
 import os
+import sys
 import tempfile
-import winreg
 from urllib.request import *
+
 from bs4 import BeautifulSoup
 from PIL import Image, ImageOps
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -99,24 +104,35 @@ class Ui_Form(object):
 
     def upd(self):
         try:
-            self.paths = tempfile.gettempdir() + "\\"
+            self.paths = tempfile.gettempdir() + "/"
             # В нижней строку прописываем адрес на страницу региона здес адрес не полный#
-            self.urs = Request("https://ua.sinoptik.ua/%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0-%D1%96%D0%B2%D0%B0%D0%BD%D1%87%D1%96")
-            ##########################################################################################
-            self.urs.add_header('User-Agent',
-                                'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML,'
-                                ' like Gecko) Chrome/45.0.2454.85 Safari/537.36 ')
+            self.urs = Request(
+                "https://sinoptik.ua/pohoda/truskavets",
+                headers={
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36"
+                },
+            )
             self.html_doc = urlopen(self.urs).read()
-            self.soup = BeautifulSoup(self.html_doc, 'html.parser')
-            self.teb = self.soup.find('div', 'lSide')
-            for i in self.teb.find_all("img"):
-                self.linc = "http:" + str(i)[int(str(i).find("src") + 5):int(str(i).find("width") - 2)]
-            for ii in self.soup.find('p', 'today-temp'):
+            self.soup = BeautifulSoup(self.html_doc, "html.parser")
+            self.teb = self.soup.find("div", "qyyKXdcq")
+            try:
+                for i in self.teb.find_all("img"):
+                    self.linc = (
+                            "https://sinoptik.ua/"
+                            + str(i)[
+                                int(str(i).find("src") + 5): int(str(i).find(".png") + 4)
+                            ]
+                    )
+            except:
+                pass
+            for ii in self.soup.find("p", "R1ENpvZz"):
                 self.label_3.setText(str(ii.string))
             self.uri = Request(self.linc)
-            self.uri.add_header('User-Agent',
-                                'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML,'
-                                ' like Gecko) Chrome/45.0.2454.85 Safari/537.36 ')
+            self.uri.add_header(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML,"
+                " like Gecko) Chrome/45.0.2454.85 Safari/537.36 ",
+            )
             self.ur = urlopen(self.uri)
             self.fil = open(self.paths + "11.jpg", "wb")
             self.fil.write(self.ur.read())
@@ -138,7 +154,7 @@ class Ui_Form(object):
                     self.y += 1
                     self.x = 0
             self.im.save(self.paths + "11.png", "PNG")
-            self.mask = Image.open(self.paths + "11.png").convert('L')
+            self.mask = Image.open(self.paths + "11.png").convert("L")
             self.output = ImageOps.fit(self.im, self.mask.size, centering=(0.5, 0.5))
             self.output.putalpha(self.mask)
             self.output.save(self.paths + "output.png")
@@ -164,20 +180,31 @@ class Ui_Form(object):
         self.timer.start()
 
 
-
 if __name__ == "__main__":
-    import sys
-    try:
+    if sys.platform == "win32":
+        import winreg
+
+        try:
+            regs = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+            mykeys = winreg.OpenKey(
+                regs,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+                0,
+                winreg.KEY_ALL_ACCESS,
+            )
+            winreg.DeleteValue(mykeys, "PogodaPC")
+            winreg.CloseKey(mykeys)
+        except:
+            pass
         regs = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
-        mykeys = winreg.OpenKey(regs, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", 0, winreg.KEY_ALL_ACCESS)
-        winreg.DeleteValue(mykeys, 'PogodaPC')
-        winreg.CloseKey(self.mykeys)
-    except:
-        pass
-    regs = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
-    mykeys = winreg.OpenKey(regs, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", 0, winreg.KEY_ALL_ACCESS)
-    #winreg.SetValueEx(mykeys, 'PogodaPC', 0, winreg.REG_SZ,'"' + sys.argv[0] + '"' + " Minimum")
-    winreg.CloseKey(mykeys)
+        mykeys = winreg.OpenKey(
+            regs,
+            r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+            0,
+            winreg.KEY_ALL_ACCESS,
+        )
+        # winreg.SetValueEx(mykeys, 'PogodaPC', 0, winreg.REG_SZ,'"' + sys.argv[0] + '"' + " Minimum")
+        winreg.CloseKey(mykeys)
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
     ui = Ui_Form()
