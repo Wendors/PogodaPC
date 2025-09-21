@@ -1,4 +1,6 @@
-﻿# -*- coding: utf-8 -*-
+﻿"""Program: PogodaPC."""
+
+# -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'PogodaPC.ui'
 #
@@ -6,11 +8,11 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+# import module
 import os
 import sys
 import tempfile
-from urllib.request import *
-
+from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 from PIL import Image, ImageOps
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -20,7 +22,10 @@ QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
 
 class Ui_Form(object):
+    """Class Ui_Form"""
+
     def setupUi(self, Form):
+        """SetupUi"""
         Form.setObjectName("Form")
         Form.resize(300, 305)
         self.disctop = QtWidgets.QApplication.desktop()
@@ -118,10 +123,10 @@ class Ui_Form(object):
             try:
                 for i in self.teb.find_all("img"):
                     self.linc = (
-                            "https://sinoptik.ua/"
-                            + str(i)[
-                                int(str(i).find("src") + 5): int(str(i).find(".png") + 4)
-                            ]
+                        "https://sinoptik.ua/"
+                        + str(i)[
+                            int(str(i).find("src") + 5) : int(str(i).find(".png") + 4)
+                        ]
                     )
             except:
                 pass
