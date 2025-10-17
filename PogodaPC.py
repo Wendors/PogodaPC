@@ -2,13 +2,6 @@
 
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'PogodaPC.ui'
-#
-# Created by: PySide6 UI code generator
-#
-# WARNING! All changes made in this file will be lost!
-
-# import module
 import os
 import sys
 import tempfile
