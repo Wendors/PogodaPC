@@ -5,7 +5,7 @@ PogodaPC - це простий віджет погоди для робочого
 
 ## Останні зміни
 **Версія v.3.7.2-86 - PySide6**
-- ✅ Міграція з PyQt5 на PySide6
+- ✅ Повна підтримка PySide6
 - ✅ Оновлення всіх залежностей
 - ✅ Виправлення проблем сумісності
 - ✅ Підтримка сучасних версій Qt
@@ -69,7 +69,7 @@ PogodaPC/
 ├── PogodaPC.ui         # UI файл (Qt Designer)
 ├── pyside6.py          # Скрипт для конвертації UI
 ├── pyinstaler.py       # Скрипт для створення виконуваного файлу
-├── pyqt5.py           # Старий скрипт (PyQt5) - застарілий
+├── requirements.txt    # Список залежностей
 └── README.md          # Цей файл
 ```
 
@@ -90,32 +90,22 @@ self.urs = Request(
 Form.move(int(screen_geometry.width() - 300), 370)  # x, y координати
 ```
 
-## Міграція з PyQt5 на PySide6
+## Технічні особливості PySide6
 
-### Основні зміни:
+### API Changes від попередніх версій:
 1. **Імпорти:**
    ```python
-   # Було (PyQt5):
-   from PyQt5 import QtCore, QtGui, QtWidgets
-   
-   # Стало (PySide6):
    from PySide6 import QtCore, QtGui, QtWidgets
    ```
 
-2. **Застарілі атрибути High DPI:**
+2. **High DPI підтримка:**
    ```python
-   # Видалено (більше не потрібні в PySide6):
-   # QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-   # QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+   # В PySide6 автоматично підтримується, додаткові налаштування не потрібні
    ```
 
-3. **Desktop API:**
+3. **Screen API:**
    ```python
-   # Було:
-   self.disctop = QtWidgets.QApplication.desktop()
-   Form.move(int(self.disctop.width() - 300), 370)
-   
-   # Стало:
+   # Сучасний підхід:
    self.screen = QtWidgets.QApplication.primaryScreen()
    screen_geometry = self.screen.geometry()
    Form.move(int(screen_geometry.width() - 300), 370)
@@ -123,19 +113,13 @@ Form.move(int(screen_geometry.width() - 300), 370)  # x, y координати
 
 4. **Font Weight:**
    ```python
-   # Було:
-   font.setWeight(75)
-   
-   # Стало:
+   # PySide6 використовує enum:
    font.setWeight(QtGui.QFont.Weight.Bold)
    ```
 
 5. **Application exec:**
    ```python
-   # Було:
-   sys.exit(app.exec_())
-   
-   # Стало:
+   # Оновлений метод:
    sys.exit(app.exec())
    ```
 
@@ -151,7 +135,7 @@ python pyinstaler.py
 Створює виконуваний файл у папці `dist/PogodaPC/`
 
 ### Windows:
-Скрипт автоматично знайде шляхи до PySide6 та Windows SDK.
+Скрипт автоматично знайде шляхи до PySide6.
 
 ## Усунення несправностей
 
