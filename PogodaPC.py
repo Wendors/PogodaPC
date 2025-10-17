@@ -17,10 +17,6 @@ from bs4 import BeautifulSoup
 from PIL import Image, ImageOps
 from PySide6 import QtCore, QtGui, QtWidgets
 
-# У PySide6 ці атрибути застарілі та не потрібні
-# QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-# QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
-
 
 class Ui_Form(object):
     """Class Ui_Form"""
@@ -29,7 +25,6 @@ class Ui_Form(object):
         """SetupUi"""
         Form.setObjectName("Form")
         Form.resize(300, 305)
-        # У PySide6 використовуємо QApplication.primaryScreen() замість desktop()
         self.screen = QtWidgets.QApplication.primaryScreen()
         screen_geometry = self.screen.geometry()
         Form.move(int(screen_geometry.width() - 300), 370)
